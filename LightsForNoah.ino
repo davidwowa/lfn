@@ -15,11 +15,24 @@
 const int stepsPerRevolution = 30;
 Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
-int current_speed = 30;
-int current_time = 1.8e+6;
+int time1 = 30 * 60;
+int time2 = 45 * 60;
+int time3 = 60 * 60;
+
+// for test
+//int time1 = 20;
+//int time2 = 30;
+//int time3 = 40;
+
+int speed1 = 100;
+int speed2 = 300;
+int speed3 = 600;
+
+int current_speed = speed1;
+int current_time = time1;
 int current_light = 0;
 
-int init_delay = 100;
+int init_delay = 50;
 
 int time_button = 0;
 int light_button = 0;
@@ -99,15 +112,15 @@ void setup() {
 void loop() {
   if (current_time >= 0) {
     Serial.print(current_time);
-    Serial.println(" ms ");
+    Serial.println(" s ");
     current_time--;
 
     int current_light_button = digitalRead(3);
     int current_speed_button = digitalRead(4);
 
-    Serial.println("set light");
     // light
     if (current_light_button == HIGH) {
+      Serial.println("set light");
       if (light_button == 0) {
         light_button = 1;
       }
@@ -118,6 +131,9 @@ void loop() {
         light_button = 0;
       } else {
         Serial.println("error on light button");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(init_delay);
+        digitalWrite(LED_BUILTIN, LOW);
       }
     }
 
@@ -134,11 +150,14 @@ void loop() {
       digitalWrite(6, HIGH);
     } else {
       Serial.println("error on light setting");
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(init_delay);
+      digitalWrite(LED_BUILTIN, LOW);
     }
 
-    Serial.println("set speed");
     // speed
     if (current_speed_button == HIGH) {
+      Serial.println("set speed");
       if (speed_button == 0) {
         speed_button = 1;
       }
@@ -149,55 +168,75 @@ void loop() {
         speed_button = 0;
       } else {
         Serial.println("error on speed button");
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(init_delay);
+        digitalWrite(LED_BUILTIN, LOW);
       }
     }
 
     if (speed_button == 0) {
-      myStepper.step(30);
+      myStepper.setSpeed(speed1);
     }
     else if (speed_button == 1) {
-      myStepper.step(45);
+      myStepper.setSpeed(speed2);
     }
     else if (speed_button == 2) {
-      myStepper.step(15);
+      myStepper.setSpeed(speed3);
     } else {
       Serial.println("error on speed setting");
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(init_delay);
+      digitalWrite(LED_BUILTIN, LOW);
     }
-
+    myStepper.step(stepsPerRevolution);
   } else {
     digitalWrite(7, LOW);
     digitalWrite(12, LOW);
     digitalWrite(5, LOW);
     digitalWrite(6, LOW);
-    // DANGER!
-    myStepper.step(stepsPerRevolution);
+    myStepper.setSpeed(0);
   }
 
   int current_time_button = digitalRead(2);
-
-  Serial.println("set time");
   // time
   if (current_time_button == HIGH) {
+    Serial.println("set time");
     if (time_button == 0) {
       time_button = 1;
-      current_time = 1.8e+6;
-      digitalWrite(7, LOW);
-      digitalWrite(12, LOW);
+      current_time = time2;
     }
     else if (time_button == 1) {
       time_button = 2;
-      current_time = 2.7e+6;
-      digitalWrite(7, LOW);
-      digitalWrite(12, HIGH);
+      current_time = time3;
     }
     else if (time_button == 2) {
       time_button = 0;
-      current_time = 3.6e+6;
-      digitalWrite(7, HIGH);
-      digitalWrite(12, LOW);
+      current_time = time1;
     } else {
       Serial.println("error on time button");
       current_time = 0;
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(init_delay);
+      digitalWrite(LED_BUILTIN, LOW);
     }
+  }
+
+  if (time_button == 0) {
+    digitalWrite(7, LOW);
+    digitalWrite(12, LOW);
+  }
+  else if (time_button == 1) {
+    digitalWrite(7, LOW);
+    digitalWrite(12, HIGH);
+  }
+  else if (time_button == 2) {
+    digitalWrite(7, HIGH);
+    digitalWrite(12, LOW);
+  }
+  else {
+    Serial.println("error on time set");
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(init_delay);
+    digitalWrite(LED_BUILTIN, LOW);
   }
 }
