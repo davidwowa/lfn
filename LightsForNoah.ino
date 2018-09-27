@@ -5,6 +5,8 @@
   Modified 21.12.2017
   by David Zakrevskyy
 
+  Update 27.09.2018 -> longer working time
+  
   1.8e+6 = 30 min
   2.7e+6 = 45 min
   3.6e+6 = 60 min
@@ -15,9 +17,10 @@
 const int stepsPerRevolution = 30;
 Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
-int time1 = 30 * 60;
-int time2 = 45 * 60;
-int time3 = 60 * 60;
+// value 620 is equal 1 second in this case
+long time1 = 2232000;//60*60*620
+long time2 = 4464000;//120*60*620
+long time3 = 6696000;//180*60*620
 
 // for test
 //int time1 = 20;
@@ -29,7 +32,7 @@ int speed2 = 300;
 int speed3 = 600;
 
 int current_speed = speed1;
-int current_time = time1;
+long current_time = time1;
 int current_light = 0;
 
 int init_delay = 50;
@@ -114,6 +117,7 @@ void loop() {
     Serial.print(current_time);
     Serial.println(" s ");
     current_time--;
+    //delay(620);
 
     int current_light_button = digitalRead(3);
     int current_speed_button = digitalRead(4);
@@ -166,7 +170,8 @@ void loop() {
       }
       else if (speed_button == 2) {
         speed_button = 0;
-      } else {
+      }
+      else {
         Serial.println("error on speed button");
         digitalWrite(LED_BUILTIN, HIGH);
         delay(init_delay);
@@ -182,7 +187,8 @@ void loop() {
     }
     else if (speed_button == 2) {
       myStepper.setSpeed(speed3);
-    } else {
+    }
+    else {
       Serial.println("error on speed setting");
       digitalWrite(LED_BUILTIN, HIGH);
       delay(init_delay);
