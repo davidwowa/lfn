@@ -32,7 +32,7 @@ long time3 = 180 * 150;
 
 int run_state = 1;
 
-int current_speed = 150;
+int current_speed = 80;
 long current_time = time1;
 int current_light = 1;
 
@@ -111,6 +111,9 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(5, LOW);
   digitalWrite(6, LOW);
+
+  delay(init_delay);
+  lightON();
 }
 
 void loop() {
